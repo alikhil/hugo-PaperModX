@@ -115,10 +115,12 @@
 
 {{/* Load mediumZoom script */}}
 {{/* It has to be loaded here because of the data-no-instant attribute */}}
+{{- if (.Param "EnableImageZoom") }}
 {{- $imagezoom := resources.Get "js/medium-zoom.min.js" }}
 <script src="{{ $imagezoom.RelPermalink }}" data-no-instant
   {{- if site.Params.assets.disableFingerprinting }}integrity="{{ $imagezoom.Data.Integrity }}"{{- end }}
 ></script>
+{{- end }}
 
 {{- if .IsPage }}
   {{- partial "page_footer.html" . }}
