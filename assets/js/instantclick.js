@@ -144,11 +144,10 @@ var InstantClick = function(document, location) {
           offset = 0
 
       if (hashElem) {
-        while (hashElem.offsetParent) {
-          offset += hashElem.offsetTop
-
-          hashElem = hashElem.offsetParent
-        }
+        // Use getBoundingClientRect() + scrollY instead of traversing the
+        // offsetParent chain with offsetTop, which causes a forced reflow on
+        // each loop iteration after the DOM has been modified above.
+        offset = Math.round(hashElem.getBoundingClientRect().top + window.scrollY)
       }
       scrollTo(0, offset)
 
