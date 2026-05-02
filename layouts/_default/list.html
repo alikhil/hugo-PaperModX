@@ -33,29 +33,34 @@
 {{- $pages := .Pages }}
 {{- if .IsHome }}
   {{/* get all regular pages instead of pages in a section */}}
-  {{- $pages = where site.RegularPages "Section" "in" site.Params.mainSections }}
+  {{- $pages = where site.RegularPages "Section" "posts" }}
 {{- end }}
 {{- $pages = where $pages "Params.hidden" "!=" true }}
 
 {{/* related issue: https://github.com/gohugoio/hugo/issues/9003 */}}
 {{ $paginator := "" }}
-{{ if (.Param "paginate") }}
+{{ $displayPages := $pages }}
+{{ if .IsHome }}
+  {{- $displayPages = first ((.Param "paginate") | default 5) $pages }}
+{{ else if (.Param "paginate") }}
   {{- $paginator = .Paginate $pages (.Param "paginate") }}
+  {{- $displayPages = $paginator.Pages }}
 {{ else }}
   {{- $paginator = .Paginate $pages }}
+  {{- $displayPages = $paginator.Pages }}
 {{ end }}
 
-{{- if and .IsHome site.Params.homeInfoParams (eq $paginator.PageNumber 1) }}
+{{- if and .IsHome site.Params.homeInfoParams }}
 {{- partial "home_info.html" . }}
 {{- end }}
 
 {{- $term := .Data.Term }}
-{{- range $index, $page := $paginator.Pages }}
+{{- range $index, $page := $displayPages }}
 
 {{- $class := "post-entry" }}
 
 {{- $user_preferred := or site.Params.disableSpecial1stPost site.Params.homeInfoParams }}
-{{- if (and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) (not $user_preferred)) }}
+{{- if (and $.IsHome (eq $index 0) (not $user_preferred)) }}
 {{- $class = "first-entry" }}
 {{- else if $term }}
 {{- $class = "post-entry tag-entry" }}
@@ -89,7 +94,7 @@
 </article>
 {{- end }}
 
-{{- if gt $paginator.TotalPages 1 }}
+{{- if and (not .IsHome) (gt $paginator.TotalPages 1) }}
 <footer class="page-footer">
   <nav class="pagination">
     {{- if $paginator.HasPrev }}
