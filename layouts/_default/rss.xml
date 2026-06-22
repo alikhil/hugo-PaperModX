@@ -22,7 +22,7 @@
       <link>{{ .icon | absURL }}</link>
     </image>
     {{- end }}
-    <generator>Hugo -- gohugo.io</generator>{{ with site.LanguageCode }}
+    <generator>Hugo -- gohugo.io</generator>{{ with site.Language.Locale }}
     <language>{{.}}</language>{{end}}{{ with site.Params.author }}{{ with index . 0 }}
     <managingEditor>{{ . }}</managingEditor>{{end}}{{end}}{{ with site.Copyright }}
     <copyright>{{.}}</copyright>{{end}}{{ if not .Date.IsZero }}
